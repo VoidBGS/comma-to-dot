@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommaToDot</title>
+  <style>
+    :root {
+        --clr-white: #f3f3f3
+    }
+    body {
+        background-color: #232121;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .drop-zone {
+      width: 100%;
+      min-height: 30em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      color: var(--clr-white);
+      margin-top: 20px;
+      text-align: center;
+    }
+    .drop-zone.over {
+      background-color: var(--clr-white);
+    }
+    #page-title {
+        text-align: center;
+        color: var(--clr-white);
+    }
+    #file-info {
+        color: var(--clr-white)
+    }
+  </style>
+</head>
+<body>
+  <h2 id="page-title">TPS Reports</h2>
+  <div id="drop-zone" class="drop-zone">
+    Drag n' drop
+  </div>
+
+  <div id="file-info"></div>
+
+  <script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInfo = document.getElementById('file-info');
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('over');
+
+      const files = e.dataTransfer.files;
+      handleFiles(files);
+    });
+
+    function readFileContent(file) {
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        const content = event.target.result;
+
+        if(!content){
+            return;
+        }
+
+        const fileWithNoCommas = content.replaceAll(',', '.')
+
+        downloadFile(file.name, fileWithNoCommas);
+      };
+
+      reader.readAsText(file);
+    }
+
+    function handleFiles(files) {
+      if (files.length > 0) {
+        fileInfo.innerHTML = `<strong>Files dropped:</strong><br>`;
+        for (let file of files) {
+            readFileContent(file)
+          fileInfo.innerHTML += `Name: ${file.name} <br> Size: ${file.size} bytes <br><br>`;
+        }
+      } else {
+        fileInfo.innerHTML = 'No files selected';
+      }
+    }
+
+    function downloadFile(originalFileName, content) {
+      const blob = new Blob([content], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      
+      a.href = url;
+      a.download = originalFileName;
+      a.click();
+      
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
