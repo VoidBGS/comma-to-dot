@@ -65,7 +65,7 @@
 </head>
 
 <body>
-    <h2 id="page-title">TPS Reports</h2>
+    <h2 id="page-title">Format TPS Report</h2>
 
     <button id="upload-btn">Upload XML File</button>
     <input type="file" id="file-input" accept=".xml">
@@ -129,7 +129,7 @@
 
         function handleFiles(files) {
             if (files.length > 0) {
-                fileInfo.innerHTML = `<strong>Files parsed:</strong><br>`;
+                fileInfo.innerHTML = `<strong>XML Files parsed:</strong><br>`;
                 for (let file of files) {
                     readFileContent(file)
                     fileInfo.innerHTML += `Name: ${file.name} <br> Size: ${file.size} bytes <br>`;
